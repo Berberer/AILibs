@@ -1,11 +1,13 @@
 package jaicore.search.testproblems.knapsack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import jaicore.search.algorithms.parallel.parallelexploration.distributed.interfaces.SerializableGraphGenerator;
@@ -251,4 +253,29 @@ public class KnapsackProblem {
 		};
 	}
 
+	public static KnapsackProblem createRandomProblem (double problemSize, int seed) {
+		Random random = new Random(seed);
+		int itemAmount = random.nextInt(((int) problemSize / 2)) + 5;
+		HashSet<String> objects = new HashSet<>();
+		HashMap<String, Double> values = new HashMap<>();
+		HashMap<String, Double> weights = new HashMap<>();
+		for (int i = 0; i < itemAmount; i++) {
+			String key = String.valueOf(i);
+			objects.add(key);
+			weights.put(key, random.nextDouble() * problemSize);
+			values.put(key, random.nextDouble());
+		}
+		int bonusCombinationAmount = random.nextInt(((int) problemSize / 10)) + 1;
+		HashMap<Set<String>, Double> bonusPoints = new HashMap<>();
+		for (int i = 0; i < bonusCombinationAmount; i++) {
+			int combinationSize = random.nextInt(((int) itemAmount / 4)) + 2;
+			HashSet<String> combination = new HashSet<>();
+			for (int o = 0; o < combinationSize; o++) {
+				combination.add(String.valueOf(random.nextInt(itemAmount)));
+			}
+			bonusPoints.put(combination, random.nextDouble());
+		}
+		return new KnapsackProblem(objects, values, weights, bonusPoints, problemSize);
+	}
+	
 }
