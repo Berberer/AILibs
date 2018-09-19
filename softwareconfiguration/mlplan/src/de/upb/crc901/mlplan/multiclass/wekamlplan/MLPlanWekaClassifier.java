@@ -94,13 +94,12 @@ public abstract class MLPlanWekaClassifier implements Classifier, CapabilitiesHa
 	public boolean hasNext() {
 		return this.state != AlgorithmState.inactive;
 	}
-	
+
 	@Override
 	public AlgorithmEvent next() {
 		try {
-			return nextWithException();
-		}
-		catch (Exception e) {
+			return this.nextWithException();
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -133,8 +132,7 @@ public abstract class MLPlanWekaClassifier implements Classifier, CapabilitiesHa
 			}
 
 			/* dynamically compute blow-ups */
-			double blowUpInSelectionPhase = MathExt
-					.round(1f / this.config.getMCCVTrainFoldSizeDuringSearch() * this.config.numberOfMCIterationsDuringSelection() / this.config.numberOfMCIterationsDuringSearch(), 2);
+			double blowUpInSelectionPhase = MathExt.round(1f / this.config.getMCCVTrainFoldSizeDuringSearch() * this.config.numberOfMCIterationsDuringSelection() / this.config.numberOfMCIterationsDuringSearch(), 2);
 			double blowUpInPostprocessing = MathExt.round((1 / (1 - this.config.dataPortionForSelection())) / this.config.numberOfMCIterationsDuringSelection(), 2);
 			this.config.setProperty(MLPlanClassifierConfig.K_BLOWUP_SELECTION, String.valueOf(blowUpInSelectionPhase));
 			this.config.setProperty(MLPlanClassifierConfig.K_BLOWUP_POSTPROCESS, String.valueOf(blowUpInPostprocessing));
@@ -142,9 +140,9 @@ public abstract class MLPlanWekaClassifier implements Classifier, CapabilitiesHa
 			/* communicate the parameters with which ML-Plan will run */
 			this.logger.info(
 					"Starting ML-Plan with the following setup:\n\tDataset: {}\n\tTarget: {}\n\tCPUs: {}\n\tTimeout: {}s\n\tTimeout for single candidate evaluation: {}s\n\tTimeout for node evaluation: {}s\n\tRandom Completions per node evaluation: {}\n\tPortion of data for selection phase: {}%\n\tMCCV for search: {} iterations with {}% for training\n\tMCCV for select: {} iterations with {}% for training\n\tBlow-ups are {} for selection phase and {} for post-processing phase.",
-					data.relationName(), MultiClassPerformanceMeasure.ERRORRATE, this.config.cpus(), this.config.timeout(), config.timeoutForCandidateEvaluation() / 1000, config.timeoutForNodeEvaluation() / 1000, config.randomCompletions(), MathExt.round(this.config.dataPortionForSelection() * 100, 2), this.config.numberOfMCIterationsDuringSearch(),
-					(int) (100 * this.config.getMCCVTrainFoldSizeDuringSearch()), this.config.numberOfMCIterationsDuringSelection(), (int) (100 * this.config.getMCCVTrainFoldSizeDuringSelection()),
-					this.config.expectedBlowupInSelection(), this.config.expectedBlowupInPostprocessing());
+					this.data.relationName(), MultiClassPerformanceMeasure.ERRORRATE, this.config.cpus(), this.config.timeout(), this.config.timeoutForCandidateEvaluation() / 1000, this.config.timeoutForNodeEvaluation() / 1000,
+					this.config.randomCompletions(), MathExt.round(this.config.dataPortionForSelection() * 100, 2), this.config.numberOfMCIterationsDuringSearch(), (int) (100 * this.config.getMCCVTrainFoldSizeDuringSearch()),
+					this.config.numberOfMCIterationsDuringSelection(), (int) (100 * this.config.getMCCVTrainFoldSizeDuringSelection()), this.config.expectedBlowupInSelection(), this.config.expectedBlowupInPostprocessing());
 			this.logger.info("Using the following preferred node evaluator: {}", this.preferredNodeEvaluator);
 
 			/* create HASCO problem */
@@ -157,9 +155,8 @@ public abstract class MLPlanWekaClassifier implements Classifier, CapabilitiesHa
 				public Double evaluate(final Classifier object) throws Exception {
 
 					/* first conduct MCCV */
-					MonteCarloCrossValidationEvaluator mccv = new MonteCarloCrossValidationEvaluator(MLPlanWekaClassifier.this.benchmark,
-							MLPlanWekaClassifier.this.config.numberOfMCIterationsDuringSelection(), MLPlanWekaClassifier.this.data,
-							MLPlanWekaClassifier.this.config.getMCCVTrainFoldSizeDuringSelection());
+					MonteCarloCrossValidationEvaluator mccv = new MonteCarloCrossValidationEvaluator(MLPlanWekaClassifier.this.benchmark, MLPlanWekaClassifier.this.config.numberOfMCIterationsDuringSelection(),
+							MLPlanWekaClassifier.this.data, MLPlanWekaClassifier.this.config.getMCCVTrainFoldSizeDuringSelection());
 					mccv.evaluate(object);
 
 					/* now retrieve .75-percentile from stats */
@@ -192,7 +189,7 @@ public abstract class MLPlanWekaClassifier implements Classifier, CapabilitiesHa
 			/* train the classifier returned by the optimizing factory */
 			long startOptimizationTime = System.currentTimeMillis();
 			this.selectedClassifier = this.optimizingFactory.call();
-			this.internalValidationErrorOfSelectedClassifier = optimizingFactory.getPerformanceOfObject();
+			this.internalValidationErrorOfSelectedClassifier = this.optimizingFactory.getPerformanceOfObject();
 			long startBuildTime = System.currentTimeMillis();
 			this.selectedClassifier.buildClassifier(this.data);
 			long endBuildTime = System.currentTimeMillis();
@@ -409,8 +406,7 @@ public abstract class MLPlanWekaClassifier implements Classifier, CapabilitiesHa
 	public void receiveSolutionEvent(final SolutionCandidateFoundEvent<HASCOSolutionCandidate<Double>> event) {
 		HASCOSolutionCandidate<Double> solution = event.getSolutionCandidate();
 		try {
-			this.logger.info("Received new solution {} with score {} and evaluation time {}ms", this.factory.getComponentInstantiation(solution.getComponentInstance()), solution.getScore(),
-					solution.getTimeToEvaluateCandidate());
+			this.logger.info("Received new solution {} with score {} and evaluation time {}ms", this.factory.getComponentInstantiation(solution.getComponentInstance()), solution.getScore(), solution.getTimeToEvaluateCandidate());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -453,6 +449,6 @@ public abstract class MLPlanWekaClassifier implements Classifier, CapabilitiesHa
 	}
 
 	public double getInternalValidationErrorOfSelectedClassifier() {
-		return internalValidationErrorOfSelectedClassifier;
+		return this.internalValidationErrorOfSelectedClassifier;
 	}
 }
