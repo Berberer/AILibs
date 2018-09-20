@@ -42,7 +42,10 @@ dependencies {
 	compile group: 'org.nd4j', name: 'nd4j-api', version: '0.9.1'
 	// gradient descent
 	compile group: 'de.jungblut.common', name: 'thomasjungblut-common', version: '1.1'
-	
+
+	testCompile project(path: ':JAICore:jaicore-basic', configuration: 'testArchives')	
+	testCompile project(path: ':JAICore:jaicore-search', configuration: 'testArchives')	
+
 }
 
 
