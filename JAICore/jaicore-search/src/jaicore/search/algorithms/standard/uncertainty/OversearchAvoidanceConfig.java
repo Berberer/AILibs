@@ -1,7 +1,7 @@
 package jaicore.search.algorithms.standard.uncertainty;
 
 import jaicore.search.algorithms.standard.uncertainty.paretosearch.FirstInFirstOutComparator;
-import jaicore.search.algorithms.standard.uncertainty.paretosearch.ParetoNode;
+import jaicore.search.model.travesaltree.Node;
 
 import java.util.Comparator;
 
@@ -22,7 +22,7 @@ public class OversearchAvoidanceConfig<N, V extends Comparable<V>> {
 	private double explorationUncertaintyThreshold = 0.1d;
 	private double minimumSolutionDistanceForExploration = 0.0d;
 	private ISolutionDistanceMetric<N> solutionDistanceMetric= (s1, s2) -> 1.0d;
-	private Comparator<ParetoNode<N, V>> paretoComparator = new FirstInFirstOutComparator<>();
+	private Comparator<Node<N, V>> paretoComparator = new FirstInFirstOutComparator<>();
 
 	public OversearchAvoidanceConfig(OversearchAvoidanceMode mode, long seed) {
 		this.oversearchAvoidanceMode = mode;
@@ -91,11 +91,11 @@ public class OversearchAvoidanceConfig<N, V extends Comparable<V>> {
 		return this.seed;
 	}
 
-	public void setParetoComperator(Comparator<ParetoNode<N, V>> paretoComparator) {
+	public void setParetoComparator(Comparator<Node<N, V>> paretoComparator) {
 		this.paretoComparator = paretoComparator;
 	}
 	
-	public Comparator<ParetoNode<N, V>> getParetoComperator() {
+	public Comparator<Node<N, V>> getParetoComperator() {
 		return this.paretoComparator;
 	}
 

@@ -1,8 +1,9 @@
 package jaicore.search.algorithms.standard.uncertainty.paretosearch;
 
+import jaicore.search.model.travesaltree.Node;
 import java.util.Comparator;
 
-public class CosinusDistanceComparator<T, V extends Comparable<V>> implements Comparator<ParetoNode<T,V>> {
+public class CosinusDistanceComparator<T, V extends Comparable<V>> implements Comparator<Node<T,V>> {
 
     public final double x1;
     public final double x2;
@@ -18,13 +19,13 @@ public class CosinusDistanceComparator<T, V extends Comparable<V>> implements Co
      * @param second
      * @return negative iff first < second, 0 iff first == second, positive iff first > second
      */
-    public int compare(ParetoNode<T,V> first, ParetoNode<T,V> second) {
+    public int compare(Node<T,V> first, Node<T,V> second) {
 
-        Double firstF = (Double) first.node.getAnnotation("f");
-        Double firstU = (Double) first.node.getAnnotation("uncertainty");
+        Double firstF = (Double) first.getAnnotation("f");
+        Double firstU = (Double) first.getAnnotation("uncertainty");
 
-        Double secondF = (Double) second.node.getAnnotation("f");
-        Double secondU = (Double) second.node.getAnnotation("uncertainty");
+        Double secondF = (Double) second.getAnnotation("f");
+        Double secondU = (Double) second.getAnnotation("uncertainty");
 
         double cosDistanceFirst = 1 - this.cosineSimilarity(firstF, firstU);
         double cosDistanceSecond = 1 - this.cosineSimilarity(secondF, secondU);

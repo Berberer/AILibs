@@ -2,6 +2,7 @@ package jaicore.search.algorithms.standard.uncertainty;
 
 import java.util.PriorityQueue;
 
+import jaicore.search.model.travesaltree.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +12,6 @@ import jaicore.search.algorithms.standard.uncertainty.explorationexploitationsea
 import jaicore.search.algorithms.standard.uncertainty.explorationexploitationsearch.BasicExplorationCandidateSelector;
 import jaicore.search.algorithms.standard.uncertainty.explorationexploitationsearch.IPhaseLengthAdjuster;
 import jaicore.search.algorithms.standard.uncertainty.explorationexploitationsearch.UncertaintyExplorationOpenSelection;
-import jaicore.search.algorithms.standard.uncertainty.paretosearch.ParetoNode;
 import jaicore.search.algorithms.standard.uncertainty.paretosearch.ParetoSelection;
 import jaicore.search.model.probleminputs.UncertainlyEvaluatedTraversalTree;
 
@@ -70,7 +70,7 @@ public class UncertaintyORGraphSearchFactory<N, A, V extends Comparable<V>> exte
 				}
 				break;
 			case PARETO_FRONT_SELECTION:
-				PriorityQueue<ParetoNode<N, V>> pareto = new PriorityQueue<>(oversearchAvoidanceConfig.getParetoComperator());
+				PriorityQueue<Node<N, V>> pareto = new PriorityQueue<>(oversearchAvoidanceConfig.getParetoComperator());
 				search.setOpen(new ParetoSelection<>(pareto));
 				break;
 			default:
