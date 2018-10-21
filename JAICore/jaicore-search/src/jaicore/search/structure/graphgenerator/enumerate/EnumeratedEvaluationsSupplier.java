@@ -20,8 +20,8 @@ public class EnumeratedEvaluationsSupplier
         <T, A, V extends Comparable<V>, E, I extends Comparable<I>>
         implements IGraphAlgorithmListener<V, E> {
 
-    /* Contains all nodes in sorted order. */
-    private final List<EnumeratedNode<T,V,I>> nodes = new ArrayList<>();
+    /* Contains all f values in sorted order. */
+    private final List<EnumeratedEvaluation<V,I>> enumeratedEvaluations = new ArrayList<>();
 
     /**
      *
@@ -29,19 +29,15 @@ public class EnumeratedEvaluationsSupplier
      */
     @Subscribe
     public void receiveEvaluatedSolutionCandidateFoundEvent(
-            EvaluatedSearchSolutionCandidateFoundEvent<T, A, V> event
+            EvaluatedSearchSolutionCandidateFoundEvent<EnumeratedNode<T, I>, A, V> event
     ) {
-
-        // No access to the node itself. Only to the inner node object `T node`).
-        throw new NotImplementedException();
+        V score = event.getSolutionCandidate().getScore();
+        List<EnumeratedNode<T,I>> nodes = event.getSolutionCandidate().getNodes();
+        I index = nodes.get(nodes.size()-1).getIndex();
+        enumeratedEvaluations.add(new EnumeratedEvaluation<>(score, index));
     }
 
-    public List<EnumeratedNode<T, V, I>> getNodes() {
-        return nodes;
-    }
-
-    public List<V> getEvaluations() {
-        // map the nodes to its f values.
-        throw new NotImplementedException();
+    public List<EnumeratedEvaluation<V,I>> getEvaluations() {
+        return enumeratedEvaluations;
     }
 }
