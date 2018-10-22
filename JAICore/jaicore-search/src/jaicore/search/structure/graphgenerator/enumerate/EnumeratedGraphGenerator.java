@@ -3,6 +3,7 @@ package jaicore.search.structure.graphgenerator.enumerate;
 import jaicore.search.core.interfaces.GraphGenerator;
 import jaicore.search.model.travesaltree.NodeExpansionDescription;
 import jaicore.search.structure.graphgenerator.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,19 @@ public class EnumeratedGraphGenerator<N, I extends Comparable<I>, A> implements 
 
     @Override
     public RootGenerator<EnumeratedNode<N,I>> getRootGenerator() {
+        if (graphGenerator.getRootGenerator() instanceof SingleRootGenerator) {
+            return new SingleRootGenerator<EnumeratedNode<N, I>>() {
+                @Override
+                public EnumeratedNode<N, I> getRoot() {
+                    N root = ((SingleRootGenerator<N>) graphGenerator.getRootGenerator()).getRoot();
+                    return new EnumeratedNode<N,I>(root, treeEnumerator.forRoot(0));
+                }
+            };
+        }
+        if (graphGenerator.getRootGenerator() instanceof MultipleRootGenerator) {
+            // Cant implement yet because MultipleRootGeneration return a collection (List needed)
+            throw new NotImplementedException();
+        }
         return null;
     }
 
