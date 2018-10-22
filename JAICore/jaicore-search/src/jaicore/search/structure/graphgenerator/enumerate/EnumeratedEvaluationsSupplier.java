@@ -10,14 +10,14 @@ import java.util.List;
 
 /**
  *
- * @param <T> Type of the inner node object.
+ * @param <N> Type of the inner node object.
  * @param <A> Type of the node edge.
  * @param <V> Type of the node evaluation.
  * @param <E>
  * @param <I> Type of the enumeration index.
  */
 public class EnumeratedEvaluationsSupplier
-        <T, A, V extends Comparable<V>, E, I extends Comparable<I>>
+        <N, A, V extends Comparable<V>, E, I extends Comparable<I>>
         implements IGraphAlgorithmListener<V, E> {
 
     /* Contains all f values in sorted order. */
@@ -29,10 +29,10 @@ public class EnumeratedEvaluationsSupplier
      */
     @Subscribe
     public void receiveEvaluatedSolutionCandidateFoundEvent(
-            EvaluatedSearchSolutionCandidateFoundEvent<EnumeratedNode<T, I>, A, V> event
+            EvaluatedSearchSolutionCandidateFoundEvent<EnumeratedNode<N, I>, A, V> event
     ) {
         V score = event.getSolutionCandidate().getScore();
-        List<EnumeratedNode<T,I>> nodes = event.getSolutionCandidate().getNodes();
+        List<EnumeratedNode<N,I>> nodes = event.getSolutionCandidate().getNodes();
         I index = nodes.get(nodes.size()-1).getIndex();
         enumeratedEvaluations.add(new EnumeratedEvaluation<>(score, index));
     }
