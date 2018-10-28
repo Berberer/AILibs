@@ -1,5 +1,6 @@
 package jaicore.search.structure.graphgenerator.enumerate;
 
+import jaicore.search.algorithms.parallel.parallelexploration.distributed.interfaces.SerializableGraphGenerator;
 import jaicore.search.core.interfaces.GraphGenerator;
 import jaicore.search.model.travesaltree.NodeExpansionDescription;
 import jaicore.search.structure.graphgenerator.*;
@@ -9,7 +10,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class EnumeratedGraphGenerator<N, A, I extends Comparable<I>> implements GraphGenerator<EnumeratedNode<N, I>, A> {
+public class EnumeratedGraphGenerator<N, A, I extends Comparable<I>> implements SerializableGraphGenerator<EnumeratedNode<N, I>, A> {
+
+    private static final long serialVersionUID = 1L;
 
     private GraphGenerator<N, A> graphGenerator;
     private TreeEnumerator<I> treeEnumerator;
