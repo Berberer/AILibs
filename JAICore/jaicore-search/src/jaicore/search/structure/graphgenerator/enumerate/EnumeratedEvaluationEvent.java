@@ -5,12 +5,12 @@ package jaicore.search.structure.graphgenerator.enumerate;
  * @param <V>
  * @param <I>
  */
-public class EnumeratedEvaluation<V, I extends Comparable<I>> implements Comparable<EnumeratedEvaluation<V,I>> {
+public class EnumeratedEvaluationEvent<V, I extends Comparable<I>> implements Comparable<EnumeratedEvaluationEvent<V,I>> {
 
     private final V evaluation;
     private final I index;
 
-    public EnumeratedEvaluation(V evaluation, I index) {
+    public EnumeratedEvaluationEvent(V evaluation, I index) {
         this.evaluation = evaluation;
         this.index = index;
     }
@@ -24,7 +24,12 @@ public class EnumeratedEvaluation<V, I extends Comparable<I>> implements Compara
     }
 
     @Override
-    public int compareTo(EnumeratedEvaluation<V, I> other) {
+    public int compareTo(EnumeratedEvaluationEvent<V, I> other) {
         return this.index.compareTo(other.index);
+    }
+
+    @Override
+    public String toString() {
+        return "[EnumeratedEvaluationEvent: (" + evaluation.toString() + ", " + evaluation.toString() + ")]";
     }
 }
