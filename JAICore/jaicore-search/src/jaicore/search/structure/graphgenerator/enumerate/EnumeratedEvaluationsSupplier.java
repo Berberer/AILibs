@@ -9,6 +9,7 @@ import com.google.common.eventbus.Subscribe;
 import jaicore.graph.IGraphAlgorithmListener;
 import jaicore.graphvisualizer.events.controlEvents.ControlEvent;
 import jaicore.graphvisualizer.events.graphEvents.GraphEvent;
+import jaicore.graphvisualizer.events.misc.EnumeratedEvaluationEvent;
 import jaicore.graphvisualizer.gui.dataSupplier.ISupplier;
 import jaicore.search.algorithms.standard.bestfirst.events.EvaluatedSearchSolutionCandidateFoundEvent;
 

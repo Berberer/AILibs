@@ -2,6 +2,7 @@ package jaicore.search.structure.graphgenerator.enumerate;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import jaicore.graphvisualizer.events.misc.EnumeratedEvaluationEvent;
 import jaicore.search.algorithms.standard.bestfirst.events.EvaluatedSearchSolutionCandidateFoundEvent;
 import jaicore.search.model.other.EvaluatedSearchGraphPath;
 import jaicore.search.testproblems.nqueens.NQueenGenerator;
