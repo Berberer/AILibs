@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class EnumeratedGraphGenerator<N, I extends Comparable<I>, A> implements GraphGenerator<EnumeratedNode<N, I>, A> {
+public class EnumeratedGraphGenerator<N, A, I extends Comparable<I>> implements GraphGenerator<EnumeratedNode<N, I>, A> {
 
     private GraphGenerator<N, A> graphGenerator;
     private TreeEnumerator<I> treeEnumerator;
