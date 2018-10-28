@@ -1,4 +1,4 @@
-package jaicore.search.structure.graphgenerator.enumerate;
+package jaicore.graphvisualizer.events.misc;
 
 /**
  *
