@@ -27,4 +27,9 @@ public class EnumeratedNode<N, I extends Comparable<I>> {
     public I getIndex() {
         return index;
     }
+
+    @Override
+    public int hashCode() {
+        return point.hashCode();
+    }
 }
