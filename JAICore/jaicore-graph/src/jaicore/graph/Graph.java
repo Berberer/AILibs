@@ -63,7 +63,9 @@ public class Graph<T> implements Serializable {
 	public void addItem(T item) {
 		Node n = new Node();
 		n.t = item;
+		System.out.println("Adding: " + item + "hashCode: " + item.hashCode());
 		this.nodes.put(item, n);
+		System.out.println(nodes);
 	}
 
 	public Set<T> getItems() {
@@ -115,8 +117,10 @@ public class Graph<T> implements Serializable {
 	}
 
 	private void checkNodeExistence(T item) {
+		System.out.println("item " + item + " hashCode: " + item.hashCode());
+		System.out.println("keyset: " + nodes.keySet());
 		if (!this.nodes.keySet().contains(item))
-			throw new IllegalArgumentException("Cannot perform operation on node " + item + ", which does not exit!");
+			throw new IllegalArgumentException("Cannot perform operation on node " + item + ", which does not exit! hashCode: + " + item.hashCode());
 	}
 
 	public final Collection<T> getSources() {
