@@ -1,4 +1,65 @@
 package jaicore.search.structure.graphgenerator.enumerate;
 
+import jaicore.graphvisualizer.gui.GraphVisualization;
+import jaicore.graphvisualizer.gui.VisualizationWindow;
+import jaicore.graphvisualizer.gui.dataSupplier.TooltipSupplier;
+import jaicore.graphvisualizer.gui.dataVisualizer.TooltipVisualizer;
+import jaicore.graphvisualizer.gui.dataVisualizer.XYGraphVisualizer;
+import jaicore.search.algorithms.standard.bestfirst.BestFirstFactory;
+import jaicore.search.algorithms.standard.bestfirst.nodeevaluation.RandomCompletionBasedNodeEvaluator;
+import jaicore.search.core.interfaces.IGraphSearch;
+import jaicore.search.model.probleminputs.GeneralEvaluatedTraversalTree;
+import jaicore.search.testproblems.knapsack.KnapsackProblem;
+import jaicore.search.testproblems.nqueens.QueenNode;
+import org.junit.Test;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 public class LandscapeVisualizationTest {
+
+    @Test
+    public void setUp() {
+        int problemSize = 200;
+        int seed = 20;
+        int timeout = 100;
+        KnapsackProblem knapsack = KnapsackProblem.createRandomProblem(problemSize, seed);
+        IGraphSearch<?, ?, EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>, String, Double, ?, ?> algorithm = null;
+
+        EnumeratedGraphGenerator<KnapsackProblem.KnapsackNode, String, Integer> egg = new EnumeratedGraphGenerator<>(knapsack.getGraphGenerator(), new IntegerTreeEnumerator());
+        EnumeratedSolutionEvaluator<KnapsackProblem.KnapsackNode, Integer, Double> ese = new EnumeratedSolutionEvaluator<>(knapsack.getSolutionEvaluator());
+        RandomCompletionBasedNodeEvaluator<
+                EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>,
+                Double> nodeEvaluator = new RandomCompletionBasedNodeEvaluator<>(
+                new Random(seed), 3, ese);
+        nodeEvaluator.setGenerator(egg);
+
+        BestFirstFactory
+                <GeneralEvaluatedTraversalTree
+                        <EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>,
+                                String,
+                                Double>,
+                        EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>,
+                        String,
+                        Double> bestFirstFactory = new BestFirstFactory<>();
+        bestFirstFactory.setProblemInput(
+                new GeneralEvaluatedTraversalTree<>(egg, nodeEvaluator));
+        bestFirstFactory.setTimeoutForFComputation(5000, n -> Double.MAX_VALUE);
+        algorithm = bestFirstFactory.getAlgorithm();
+
+        VisualizationWindow window = new VisualizationWindow<QueenNode, String>(algorithm);
+
+        EnumeratedEvaluationsSupplier<KnapsackProblem.KnapsackNode, String, Double, String, Integer> ees = new EnumeratedEvaluationsSupplier();
+        window.addDataSupplier(ees);
+
+        algorithm.setTimeout(timeout * 1000, TimeUnit.MILLISECONDS);
+        try {
+            algorithm.call();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("algorithm finished with timeout exception, which is ok.");
+        }
+    }
+
 }
