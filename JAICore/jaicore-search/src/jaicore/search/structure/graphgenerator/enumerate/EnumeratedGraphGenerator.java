@@ -37,7 +37,7 @@ public class EnumeratedGraphGenerator<N, A, I extends Comparable<I>> implements 
                 @Override
                 public EnumeratedNode<N, I> getRoot() {
                     N root = ((SingleRootGenerator<N>) graphGenerator.getRootGenerator()).getRoot();
-                    return new EnumeratedNode<N,I>(root, treeEnumerator.forRoot(0));
+                    return new EnumeratedNode<N,I>(root, treeEnumerator.forRoot(1));
                 }
             };
         }
