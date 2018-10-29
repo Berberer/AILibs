@@ -5,6 +5,7 @@ import jaicore.graphvisualizer.gui.VisualizationWindow;
 import jaicore.graphvisualizer.gui.dataSupplier.TooltipSupplier;
 import jaicore.graphvisualizer.gui.dataVisualizer.TooltipVisualizer;
 import jaicore.graphvisualizer.gui.dataVisualizer.XYGraphVisualizer;
+import jaicore.search.algorithms.standard.bestfirst.BestFirst;
 import jaicore.search.algorithms.standard.bestfirst.BestFirstFactory;
 import jaicore.search.algorithms.standard.bestfirst.nodeevaluation.RandomCompletionBasedNodeEvaluator;
 import jaicore.search.core.interfaces.IGraphSearch;
@@ -25,22 +26,29 @@ public class LandscapeVisualizationTest {
         int seed = 20;
         int timeout = 100;
         KnapsackProblem knapsack = KnapsackProblem.createRandomProblem(problemSize, seed);
-        IGraphSearch<?, ?, EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>, String, Double, ?, ?> algorithm = null;
+        BestFirst<
+                GeneralEvaluatedTraversalTree<
+                        EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList>,
+                        String,
+                        Double>,
+                EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList>,
+                String,
+                Double> algorithm = null;
 
-        EnumeratedGraphGenerator<KnapsackProblem.KnapsackNode, String, Integer> egg = new EnumeratedGraphGenerator<>(knapsack.getGraphGenerator(), new IntegerTreeEnumerator());
-        EnumeratedSolutionEvaluator<KnapsackProblem.KnapsackNode, Integer, Double> ese = new EnumeratedSolutionEvaluator<>(knapsack.getSolutionEvaluator());
+        EnumeratedGraphGenerator<KnapsackProblem.KnapsackNode, String, ListEnumerator.EnumerationList> egg = new EnumeratedGraphGenerator<>(knapsack.getGraphGenerator(), new ListEnumerator());
+        EnumeratedSolutionEvaluator<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList, Double> ese = new EnumeratedSolutionEvaluator<>(knapsack.getSolutionEvaluator());
         RandomCompletionBasedNodeEvaluator<
-                EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>,
+                EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList>,
                 Double> nodeEvaluator = new RandomCompletionBasedNodeEvaluator<>(
                 new Random(seed), 3, ese);
         nodeEvaluator.setGenerator(egg);
 
         BestFirstFactory
                 <GeneralEvaluatedTraversalTree
-                        <EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>,
+                        <EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList>,
                                 String,
                                 Double>,
-                        EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>,
+                        EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList>,
                         String,
                         Double> bestFirstFactory = new BestFirstFactory<>();
         bestFirstFactory.setProblemInput(
