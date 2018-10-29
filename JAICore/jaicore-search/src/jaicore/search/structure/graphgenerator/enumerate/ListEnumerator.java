@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ListEnumerator implements TreeEnumerator<ListEnumerator.EnumerationList> {
 
-    public static class EnumerationList implements Comparable<EnumerationList> {
+    public static class EnumerationList implements EnumerationIndex<EnumerationList> {
 
         private final ArrayList<Integer> list;
 

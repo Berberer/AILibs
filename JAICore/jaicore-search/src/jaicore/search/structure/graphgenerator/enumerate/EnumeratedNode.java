@@ -9,7 +9,7 @@ import jaicore.search.model.travesaltree.Node;
  * @param <N> Type of the inner node object.
  * @param <I> Type of the enumeration index.
  */
-public class EnumeratedNode<N, I extends Comparable<I>> {
+public class EnumeratedNode<N, I extends EnumerationIndex<I>> {
 
 
     private final N point;

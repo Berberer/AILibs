@@ -58,7 +58,7 @@ public class LandscapeVisualizationTest {
 
         VisualizationWindow window = new VisualizationWindow<QueenNode, String>(algorithm);
 
-        EnumeratedEvaluationsSupplier<KnapsackProblem.KnapsackNode, String, Double, String, Integer> ees = new EnumeratedEvaluationsSupplier();
+        EnumeratedEvaluationsSupplier<KnapsackProblem.KnapsackNode, String, Double, String, ListEnumerator.EnumerationList> ees = new EnumeratedEvaluationsSupplier();
         window.addDataSupplier(ees);
 
         algorithm.setTimeout(timeout * 1000, TimeUnit.MILLISECONDS);

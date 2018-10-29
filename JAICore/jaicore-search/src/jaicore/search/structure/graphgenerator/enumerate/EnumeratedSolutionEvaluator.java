@@ -5,7 +5,7 @@ import jaicore.search.core.interfaces.ISolutionEvaluator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class EnumeratedSolutionEvaluator<N, I extends Comparable<I>, V extends Comparable<V>> implements ISolutionEvaluator<EnumeratedNode<N, I>, V> {
+public class EnumeratedSolutionEvaluator<N, I extends EnumerationIndex<I>, V extends Comparable<V>> implements ISolutionEvaluator<EnumeratedNode<N, I>, V> {
 
     ISolutionEvaluator<N,V> solutionEvaluator;
 

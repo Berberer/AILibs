@@ -23,13 +23,13 @@ import jaicore.search.algorithms.standard.bestfirst.events.EvaluatedSearchSoluti
  * @param <I> Type of the enumeration index.
  */
 public class EnumeratedEvaluationsSupplier
-        <N, A, V extends Comparable<V>, E, I extends Comparable<I>>
+        <N, A, V extends Comparable<V>, E, I extends EnumerationIndex<I>>
         implements IGraphAlgorithmListener<V, E>, ISupplier {
 
     private EventBus eventBus = new EventBus();
 
     /* Contains all f values in sorted order. */
-    private final List<EnumeratedEvaluationEvent<V,I>> enumeratedEvaluationEvents = new ArrayList<>();
+    private final List<EnumeratedEvaluationEvent<V,Integer>> enumeratedEvaluationEvents = new ArrayList<>();
 
     /**
      * Receives an `jaicore.search.algorithms.standard.bestfirst.events.EvaluatedSearchSolutionCandidateFoundEvent`
@@ -48,7 +48,7 @@ public class EnumeratedEvaluationsSupplier
         V score = event.getSolutionCandidate().getScore();
         List<EnumeratedNode<N,I>> nodes = event.getSolutionCandidate().getNodes();
         I index = nodes.get(nodes.size()-1).getIndex();
-        EnumeratedEvaluationEvent<V,I> enumeratedEvaluationEvent = new EnumeratedEvaluationEvent<>(score, index);
+        EnumeratedEvaluationEvent<V,Integer> enumeratedEvaluationEvent = new EnumeratedEvaluationEvent<>(score, index.toInt());
         enumeratedEvaluationEvents.add(enumeratedEvaluationEvent);
         eventBus.post(enumeratedEvaluationEvent);
     }
@@ -73,7 +73,7 @@ public class EnumeratedEvaluationsSupplier
         return null;
     }
 
-    public List<EnumeratedEvaluationEvent<V,I>> getEvaluations() {
+    public List<EnumeratedEvaluationEvent<V,Integer>> getEvaluations() {
         return enumeratedEvaluationEvents;
     }
 }

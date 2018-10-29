@@ -12,15 +12,16 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class EnumeratedEvaluationsSupplierTest {
 
-    private EnumeratedEvaluationsSupplier<QueenNode, String, Double, Integer, String> enumeratedEvaluationsSupplier;
-    private EvaluatedSearchSolutionCandidateFoundEventEmitter<EnumeratedNode<QueenNode, Integer>, String, Double> solutionEventEmitter;
+    private EnumeratedEvaluationsSupplier<QueenNode, String, Double, String, ListEnumerator.EnumerationList> enumeratedEvaluationsSupplier;
+    private EvaluatedSearchSolutionCandidateFoundEventEmitter<EnumeratedNode<QueenNode, ListEnumerator.EnumerationList>, String, Double> solutionEventEmitter;
     private EnumeratedEvaluationListener<QueenNode, Integer> enumeratedEvaluationListener;
-    private ArrayList<EvaluatedSearchGraphPath<EnumeratedNode<QueenNode, Integer>, String, Double>> evaluatedSearchGraphPaths;
+    private ArrayList<EvaluatedSearchGraphPath<EnumeratedNode<QueenNode, ListEnumerator.EnumerationList>, String, Double>> evaluatedSearchGraphPaths;
 
 
     class EvaluatedSearchSolutionCandidateFoundEventEmitter<N, A, V extends Comparable<V>>  {
@@ -59,14 +60,14 @@ public class EnumeratedEvaluationsSupplierTest {
         NQueenGenerator nQueenGenerator = new NQueenGenerator(5);
         evaluatedSearchGraphPaths = new ArrayList<>();
         for (int i=0; i<=5; i++) {
-            EnumeratedNode<QueenNode, Integer> enumeratedNode = new EnumeratedNode<>(
+            EnumeratedNode<QueenNode, ListEnumerator.EnumerationList> enumeratedNode = new EnumeratedNode<>(
                     nQueenGenerator.getRootGenerator().getRoot(),
-                    1
+                    new ListEnumerator.EnumerationList(new ArrayList<>(Arrays.asList(1)))
             );
-            List<EnumeratedNode<QueenNode, Integer>> nodes = new ArrayList<>();
+            List<EnumeratedNode<QueenNode, ListEnumerator.EnumerationList>> nodes = new ArrayList<>();
             nodes.add(enumeratedNode);
             List<String> actions = new ArrayList<>();
-            EvaluatedSearchGraphPath<EnumeratedNode<QueenNode, Integer>, String, Double> evaluatedSearchGraphPath = new EvaluatedSearchGraphPath<>(
+            EvaluatedSearchGraphPath<EnumeratedNode<QueenNode, ListEnumerator.EnumerationList>, String, Double> evaluatedSearchGraphPath = new EvaluatedSearchGraphPath<>(
                     nodes, actions,
                     (double) i
             );
@@ -91,7 +92,7 @@ public class EnumeratedEvaluationsSupplierTest {
         // Map to emitted events and received evaluations to its indices.
         List<Integer> emittedIndices = evaluatedSearchGraphPaths
                 .stream()
-                .map(path->path.getNodes().get(path.getNodes().size()-1).getIndex())
+                .map(path->path.getNodes().get(path.getNodes().size()-1).getIndex().toInt())
                 .collect(Collectors.toList());
         List<Integer> receivedIndices = enumeratedEvaluationListener.getEvents().stream()
                 .map(event->event.getIndex())

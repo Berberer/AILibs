@@ -2,43 +2,40 @@ package jaicore.search.structure.graphgenerator.enumerate;
 
 import jaicore.search.core.interfaces.GraphGenerator;
 import jaicore.search.model.travesaltree.NodeExpansionDescription;
-import jaicore.search.structure.graphgenerator.RootGenerator;
 import jaicore.search.structure.graphgenerator.SingleRootGenerator;
 import jaicore.search.structure.graphgenerator.SuccessorGenerator;
 import jaicore.search.testproblems.knapsack.KnapsackProblem;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.junit.Assert.*;
 import static jaicore.search.testproblems.knapsack.KnapsackProblem.*;
 
 public class EnumeratedGraphGeneratorTester {
 
-    IntegerTreeEnumerator te;
+    ListEnumerator le;
 
     GraphGenerator<KnapsackProblem.KnapsackNode, String> gg;
-    EnumeratedGraphGenerator<KnapsackProblem.KnapsackNode, String, Integer> egg;
+    EnumeratedGraphGenerator<KnapsackProblem.KnapsackNode, String, ListEnumerator.EnumerationList> egg;
 
     SingleRootGenerator<KnapsackProblem.KnapsackNode> ggRootGenerator;
-    SingleRootGenerator<EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>> eggRootGenerator;
+    SingleRootGenerator<EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList>> eggRootGenerator;
 
     SuccessorGenerator<KnapsackProblem.KnapsackNode, String> ggSuccessorGenerator;
-    SuccessorGenerator<EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>, String> eggSuccessorGenerator;
+    SuccessorGenerator<EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList>, String> eggSuccessorGenerator;
 
     @Before
     public void setUp() {
-        te = new IntegerTreeEnumerator();
+        le = new ListEnumerator();
 
         gg = createRandomProblem(10, 10).getGraphGenerator();
-        egg = new EnumeratedGraphGenerator<>(gg, te);
+        egg = new EnumeratedGraphGenerator<>(gg, le);
 
         ggRootGenerator = (SingleRootGenerator<KnapsackProblem.KnapsackNode>)gg.getRootGenerator();
-        eggRootGenerator = (SingleRootGenerator<EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>>)egg.getRootGenerator();
+        eggRootGenerator = (SingleRootGenerator<EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList>>)egg.getRootGenerator();
 
         ggSuccessorGenerator = gg.getSuccessorGenerator();
         eggSuccessorGenerator = egg.getSuccessorGenerator();
@@ -62,10 +59,10 @@ public class EnumeratedGraphGeneratorTester {
      */
     @Test
     public void testEnumeratedGraphGeneratorGeneratesCorrectIndexForRoot() {
-        Integer eggIndex = eggRootGenerator.getRoot().getIndex();
-        Integer teIndex = te.forRoot(0); // Zero since its used alongside SingleRootGenerator.
+        ListEnumerator.EnumerationList eggIndex = eggRootGenerator.getRoot().getIndex();
+        ListEnumerator.EnumerationList leIndex = le.forRoot(1); // Zero since its used alongside SingleRootGenerator.
 
-        assertEquals(eggIndex, teIndex);
+        assertEquals(eggIndex, leIndex);
     }
 
     /**
@@ -76,13 +73,13 @@ public class EnumeratedGraphGeneratorTester {
     public void testEnumeratedGrapGeneratorGeneratesSameSuccessorsAsGraphGenerator() {
         try {
             KnapsackProblem.KnapsackNode ggNode = ggRootGenerator.getRoot();
-            EnumeratedNode<KnapsackProblem.KnapsackNode, Integer> eggNode = eggRootGenerator.getRoot();
+            EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList> eggNode = eggRootGenerator.getRoot();
 //            for (int i = 0; i <= 3; i++) {
 //                ggNode = ggSuccessorGenerator.generateSuccessors(ggNode).get(0).getTo();
 //                eggNode = eggSuccessorGenerator.generateSuccessors(eggNode).get(0).getTo();
 //            }
             List<NodeExpansionDescription<KnapsackProblem.KnapsackNode, String>> ggSuccessors;
-            List<NodeExpansionDescription<EnumeratedNode<KnapsackProblem.KnapsackNode, Integer>, String>> eggSuccessors;
+            List<NodeExpansionDescription<EnumeratedNode<KnapsackProblem.KnapsackNode, ListEnumerator.EnumerationList>, String>> eggSuccessors;
             List<NodeExpansionDescription<KnapsackProblem.KnapsackNode, String>> mapEggToGG;
 
             ggSuccessors = ggSuccessorGenerator.generateSuccessors(ggNode);
