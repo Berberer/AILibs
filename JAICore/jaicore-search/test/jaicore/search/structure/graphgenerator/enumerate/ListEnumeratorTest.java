@@ -3,6 +3,7 @@ package jaicore.search.structure.graphgenerator.enumerate;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import jaicore.graphvisualizer.enumerate.ListEnumerator;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;

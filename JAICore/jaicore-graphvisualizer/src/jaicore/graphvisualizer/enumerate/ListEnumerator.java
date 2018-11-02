@@ -1,6 +1,7 @@
-package jaicore.search.structure.graphgenerator.enumerate;
+package jaicore.graphvisualizer.enumerate;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class ListEnumerator implements TreeEnumerator<ListEnumerator.EnumerationList> {
 
@@ -33,6 +34,13 @@ public class ListEnumerator implements TreeEnumerator<ListEnumerator.Enumeration
                 sum += list.get(i) * Math.pow(10, list.size()-i-1);
             }
             return sum;
+        }
+
+        @Override
+        public String toString() {
+            return list.stream()
+                    .map(val->String.valueOf(val))
+                    .collect(Collectors.joining(","));
         }
 
     }
