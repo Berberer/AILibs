@@ -30,6 +30,6 @@ public class EnumeratedEvaluationEvent<V, I extends Comparable<I>> implements Co
 
     @Override
     public String toString() {
-        return "[EnumeratedEvaluationEvent: (" + evaluation.toString() + ", " + evaluation.toString() + ")]";
+        return "[EnumeratedEvaluationEvent: (" + evaluation.toString() + ", " + index.toString() + ")]";
     }
 }

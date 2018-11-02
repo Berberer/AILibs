@@ -8,7 +8,6 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import jaicore.graph.IGraphAlgorithmListener;
 import jaicore.graphvisualizer.enumerate.EnumeratedNode;
-import jaicore.graphvisualizer.enumerate.EnumerationIndex;
 import jaicore.graphvisualizer.events.controlEvents.ControlEvent;
 import jaicore.graphvisualizer.events.graphEvents.GraphEvent;
 import jaicore.graphvisualizer.events.misc.EnumeratedEvaluationEvent;
@@ -24,7 +23,7 @@ import jaicore.search.algorithms.standard.bestfirst.events.EvaluatedSearchSoluti
  * @param <I> Type of the enumeration index.
  */
 public class EnumeratedEvaluationsSupplier
-        <N, A, V extends Comparable<V>, E, I extends EnumerationIndex<I>>
+        <N, A, V extends Comparable<V>, E, I extends Comparable<I>>
         implements IGraphAlgorithmListener<V, E>, ISupplier {
 
     private EventBus eventBus = new EventBus();
