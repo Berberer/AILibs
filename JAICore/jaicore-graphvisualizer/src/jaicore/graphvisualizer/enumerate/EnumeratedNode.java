@@ -8,7 +8,7 @@ package jaicore.graphvisualizer.enumerate;
  * @param <N> Type of the inner node object.
  * @param <I> Type of the enumeration index.
  */
-public class EnumeratedNode<N, I extends EnumerationIndex<I>> {
+public class EnumeratedNode<N, I extends Comparable<I>> {
 
 
     private final N point;

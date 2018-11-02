@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class ListEnumerator implements TreeEnumerator<ListEnumerator.EnumerationList> {
 
-    public static class EnumerationList implements EnumerationIndex<EnumerationList> {
+    public static class EnumerationList implements Comparable<EnumerationList> {
 
         private final ArrayList<Integer> list;
 
