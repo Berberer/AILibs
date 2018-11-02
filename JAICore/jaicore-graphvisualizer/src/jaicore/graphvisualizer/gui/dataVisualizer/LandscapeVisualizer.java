@@ -4,30 +4,35 @@ package jaicore.graphvisualizer.gui.dataVisualizer;
 
 import com.google.common.eventbus.Subscribe;
 
+import jaicore.graphvisualizer.enumerate.EnumeratedNode;
+import jaicore.graphvisualizer.enumerate.ListEnumerator;
+import jaicore.graphvisualizer.events.controlEvents.NodePushed;
 import jaicore.graphvisualizer.events.misc.EnumeratedEvaluationEvent;
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.ScatterChart;
-import javafx.scene.chart.XYChart;
-
+import javafx.scene.chart.*;
 
 
 public class LandscapeVisualizer implements IVisualizer {
 
-    ScatterChart<Number, Number> chart;
-    XYChart.Series series;
+    ScatterChart<String, Number> chart;
+
+    XYChart.Series<String, Number> evaluatedSeries;
+    XYChart.Series<String, Number> openSeries;
+
 
     public LandscapeVisualizer() {
-        NumberAxis x = new NumberAxis();
+        CategoryAxis x = new CategoryAxis();  // Extends Axis<String>
         NumberAxis y = new NumberAxis();
         y.setLabel("f");
         x.setLabel("Index");
-        series = new XYChart.Series();
-        series.setName("Landscape");
+
+        evaluatedSeries = new XYChart.Series<String, Number>();
+        evaluatedSeries.setName("Landscape");
+
         chart = new ScatterChart<>(x, y);
-        chart.getData().add(series);
+        chart.setAnimated(false);
+        chart.getData().add(evaluatedSeries);
     }
 
     @Override
@@ -36,11 +41,23 @@ public class LandscapeVisualizer implements IVisualizer {
     }
 
     @Subscribe
-    public void receiveEnumeratedEvaluationEvent(EnumeratedEvaluationEvent event) {
+    public void receiveEnumeratedEvaluationEvent(EnumeratedEvaluationEvent<Double, ListEnumerator.EnumerationList> event) {
+        assert event.getIndex() instanceof ListEnumerator.EnumerationList;
+        assert event.getEvaluation() instanceof Double;
         Platform.runLater(() -> {
-            series.getData().add(new XYChart.Data(event.getIndex(), event.getEvaluation()));
+            String x = event.getIndex().toString();
+            evaluatedSeries.getData().add(
+                    new XYChart.Data<>(x, event.getEvaluation())
+            );
         });
     }
+
+    @Subscribe
+    public void nodePushedEvent(NodePushed<EnumeratedNode<?, ListEnumerator.EnumerationList>> event) {
+        ListEnumerator.EnumerationList index = event.getNode().getIndex();
+    }
+
+
 
     @Override
     public String getSupplier() {

@@ -69,7 +69,7 @@ public class VisualizationWindow<V, E> {
 			System.exit(0);
 		}
 
-		this.addDataSupplier(tooltipSupplier);
+		// this.addDataSupplier(tooltipSupplier);
 	}
 
 	public void addDataSupplier(ISupplier supplier) {
