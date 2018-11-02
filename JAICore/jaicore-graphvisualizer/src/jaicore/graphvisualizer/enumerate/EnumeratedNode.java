@@ -32,4 +32,13 @@ public class EnumeratedNode<N, I extends EnumerationIndex<I>> {
     public int hashCode() {
         return point.hashCode();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof EnumeratedNode) {
+            return point.equals(((EnumeratedNode)obj).point);
+        }
+        return false;
+
+    }
 }
