@@ -1,6 +1,5 @@
-package jaicore.search.structure.graphgenerator.enumerate;
+package jaicore.graphvisualizer.enumerate;
 
-import jaicore.search.model.travesaltree.Node;
 
 /**
  * Wrapper class for a nodes point. For enuemration purpose.
