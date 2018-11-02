@@ -1,5 +1,7 @@
 package jaicore.search.structure.graphgenerator.enumerate;
 
+import jaicore.graphvisualizer.enumerate.EnumeratedNode;
+import jaicore.graphvisualizer.enumerate.ListEnumerator;
 import jaicore.search.core.interfaces.GraphGenerator;
 import jaicore.search.model.travesaltree.NodeExpansionDescription;
 import jaicore.search.structure.graphgenerator.SingleRootGenerator;

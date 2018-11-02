@@ -7,13 +7,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import jaicore.graph.IGraphAlgorithmListener;
+import jaicore.graphvisualizer.enumerate.EnumeratedNode;
+import jaicore.graphvisualizer.enumerate.EnumerationIndex;
 import jaicore.graphvisualizer.events.controlEvents.ControlEvent;
 import jaicore.graphvisualizer.events.graphEvents.GraphEvent;
 import jaicore.graphvisualizer.events.misc.EnumeratedEvaluationEvent;
 import jaicore.graphvisualizer.gui.dataSupplier.ISupplier;
 import jaicore.search.algorithms.standard.bestfirst.events.EvaluatedSearchSolutionCandidateFoundEvent;
 
-// AILibs->Evaluations->AutoML test wird ein VisualizationWindow aufgerufen.
 /**
  *
  * @param <N> Type of the inner node object.
@@ -29,7 +30,7 @@ public class EnumeratedEvaluationsSupplier
     private EventBus eventBus = new EventBus();
 
     /* Contains all f values in sorted order. */
-    private final List<EnumeratedEvaluationEvent<V,Integer>> enumeratedEvaluationEvents = new ArrayList<>();
+    private final List<EnumeratedEvaluationEvent<V,I>> enumeratedEvaluationEvents = new ArrayList<>();
 
     /**
      * Receives an `jaicore.search.algorithms.standard.bestfirst.events.EvaluatedSearchSolutionCandidateFoundEvent`
@@ -43,15 +44,16 @@ public class EnumeratedEvaluationsSupplier
         assert event.getSolutionCandidate() != null;
         assert event.getSolutionCandidate().getScore() != null;
         assert event.getSolutionCandidate().getNodes() != null;
-        assert event.getSolutionCandidate().getEdges() != null;
 
         V score = event.getSolutionCandidate().getScore();
         List<EnumeratedNode<N,I>> nodes = event.getSolutionCandidate().getNodes();
         I index = nodes.get(nodes.size()-1).getIndex();
-        EnumeratedEvaluationEvent<V,Integer> enumeratedEvaluationEvent = new EnumeratedEvaluationEvent<>(score, index.toInt());
-        enumeratedEvaluationEvents.add(enumeratedEvaluationEvent);
+        EnumeratedEvaluationEvent<V,I> enumeratedEvaluationEvent = new EnumeratedEvaluationEvent<>(score, index);
+        // enumeratedEvaluationEvents.add(enumeratedEvaluationEvent);
         eventBus.post(enumeratedEvaluationEvent);
     }
+
+
 
     @Override
     public void registerListener(Object listener) {
@@ -73,7 +75,7 @@ public class EnumeratedEvaluationsSupplier
         return null;
     }
 
-    public List<EnumeratedEvaluationEvent<V,Integer>> getEvaluations() {
+    public List<EnumeratedEvaluationEvent<V,I>> getEvaluations() {
         return enumeratedEvaluationEvents;
     }
 }

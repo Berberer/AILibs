@@ -1,14 +1,11 @@
 package jaicore.search.structure.graphgenerator.enumerate;
 
-import jaicore.graphvisualizer.gui.GraphVisualization;
+import jaicore.graphvisualizer.enumerate.EnumeratedNode;
+import jaicore.graphvisualizer.enumerate.ListEnumerator;
 import jaicore.graphvisualizer.gui.VisualizationWindow;
-import jaicore.graphvisualizer.gui.dataSupplier.TooltipSupplier;
-import jaicore.graphvisualizer.gui.dataVisualizer.TooltipVisualizer;
-import jaicore.graphvisualizer.gui.dataVisualizer.XYGraphVisualizer;
 import jaicore.search.algorithms.standard.bestfirst.BestFirst;
 import jaicore.search.algorithms.standard.bestfirst.BestFirstFactory;
 import jaicore.search.algorithms.standard.bestfirst.nodeevaluation.RandomCompletionBasedNodeEvaluator;
-import jaicore.search.core.interfaces.IGraphSearch;
 import jaicore.search.model.probleminputs.GeneralEvaluatedTraversalTree;
 import jaicore.search.testproblems.knapsack.KnapsackProblem;
 import jaicore.search.testproblems.nqueens.QueenNode;
@@ -16,7 +13,6 @@ import org.junit.Test;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class LandscapeVisualizationTest {
 
@@ -59,7 +55,9 @@ public class LandscapeVisualizationTest {
         VisualizationWindow window = new VisualizationWindow<QueenNode, String>(algorithm);
 
         EnumeratedEvaluationsSupplier<KnapsackProblem.KnapsackNode, String, Double, String, ListEnumerator.EnumerationList> ees = new EnumeratedEvaluationsSupplier();
+        algorithm.registerListener(ees);
         window.addDataSupplier(ees);
+
 
         algorithm.setTimeout(timeout * 1000, TimeUnit.MILLISECONDS);
         try {

@@ -1,5 +1,7 @@
 package jaicore.search.structure.graphgenerator.enumerate;
 
+import jaicore.graphvisualizer.enumerate.EnumeratedNode;
+import jaicore.graphvisualizer.enumerate.EnumerationIndex;
 import jaicore.search.core.interfaces.ISolutionEvaluator;
 
 import java.util.List;
