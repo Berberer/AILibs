@@ -8,7 +8,6 @@ import jaicore.graphvisualizer.enumerate.EnumeratedNode;
 import jaicore.graphvisualizer.enumerate.ListEnumerator;
 import jaicore.graphvisualizer.events.controlEvents.NodePushed;
 import jaicore.graphvisualizer.events.misc.EnumeratedEvaluationEvent;
-import jaicore.graphvisualizer.gui.ScatterChartWithMarkers;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
