@@ -53,7 +53,6 @@ public class EnumeratedEvaluationsSupplier
     }
 
 
-
     @Override
     public void registerListener(Object listener) {
         this.eventBus.register(listener);

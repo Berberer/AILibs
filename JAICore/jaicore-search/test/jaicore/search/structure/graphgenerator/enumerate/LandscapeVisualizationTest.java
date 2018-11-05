@@ -52,7 +52,7 @@ public class LandscapeVisualizationTest {
         bestFirstFactory.setTimeoutForFComputation(5000, n -> Double.MAX_VALUE);
         algorithm = bestFirstFactory.getAlgorithm();
 
-        VisualizationWindow window = new VisualizationWindow<QueenNode, String>(algorithm);
+        VisualizationWindow window = new VisualizationWindow<EnumeratedNode<QueenNode, ListEnumerator.EnumerationList>, String>(algorithm);
 
         EnumeratedEvaluationsSupplier<KnapsackProblem.KnapsackNode, String, Double, String, ListEnumerator.EnumerationList> ees = new EnumeratedEvaluationsSupplier();
         algorithm.registerListener(ees);
