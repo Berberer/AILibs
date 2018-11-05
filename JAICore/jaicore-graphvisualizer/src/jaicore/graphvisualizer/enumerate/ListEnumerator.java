@@ -1,6 +1,7 @@
 package jaicore.graphvisualizer.enumerate;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class ListEnumerator implements TreeEnumerator<ListEnumerator.EnumerationList> {
@@ -41,6 +42,14 @@ public class ListEnumerator implements TreeEnumerator<ListEnumerator.Enumeration
             return list.stream()
                     .map(val->String.valueOf(val))
                     .collect(Collectors.joining(","));
+        }
+
+        public EnumerationList siblingClone() {
+            ArrayList<Integer> listClone = new ArrayList<>();
+            list.stream().forEach(ival->listClone.add(new Integer(ival)));
+            Integer last = listClone.get(listClone.size()-1);
+            last++;
+            return new EnumerationList(listClone);
         }
 
     }
