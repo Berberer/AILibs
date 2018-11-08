@@ -8,14 +8,13 @@ public class BasicUncertaintySource<T, V extends Comparable<V>> implements IUnce
 
 	@Override
 	public double calculateUncertainty(Node<T, V> n, List<List<T>> simulationPaths, List<V> simulationEvaluations) {
-		
 		double uncertainty = 1.0d;
 		
 		if (simulationPaths != null && !simulationPaths.isEmpty()) {
 			T t = n.getPoint();
 			double meanDepth = 0.0d;
 			for (List<T> path : simulationPaths) {
-				if (path.contains(t)) {
+				if (path.contains(t) && !path.isEmpty()) {
 					double post = 0.0d;
 					boolean startsCounting = false;
 					for (T pe : path) {
@@ -35,7 +34,7 @@ public class BasicUncertaintySource<T, V extends Comparable<V>> implements IUnce
 			}
 		}
 		
-		if (simulationEvaluations != null && !simulationEvaluations.isEmpty() && simulationEvaluations.get(0) instanceof Double) {
+		if (simulationEvaluations != null && simulationEvaluations.size() > 1 && simulationEvaluations.get(0) instanceof Double) {
 			double mean = 0.0d;
 			double sampleVariance = 0.0d;
 			for (V f : simulationEvaluations) {
