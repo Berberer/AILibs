@@ -4,6 +4,8 @@ import jaicore.graph.IGraphAlgorithm;
 import jaicore.graphvisualizer.TooltipGenerator;
 import jaicore.graphvisualizer.gui.dataSupplier.ISupplier;
 import jaicore.graphvisualizer.gui.dataSupplier.TooltipSupplier;
+import jaicore.graphvisualizer.gui.dataVisualizer.IVisualizer;
+import jaicore.graphvisualizer.gui.dataVisualizer.LandscapeVisualizer;
 import javafx.application.Platform;
 
 /**
@@ -22,10 +24,19 @@ public class VisualizationWindow<V, E> {
 	 */
 	Recorder recorder;
 
+
 	private TooltipSupplier tooltipSupplier;
 
 	public VisualizationWindow(IGraphAlgorithm graphAlgorithm) {
-		this(graphAlgorithm, "Visualizer for " + graphAlgorithm);
+		this(graphAlgorithm, "Visualizer for " + graphAlgorithm, new String[0]);
+	}
+
+	public VisualizationWindow(IGraphAlgorithm graphAlgorithm, String title) {
+		this(graphAlgorithm, title, new String[0]);
+	}
+
+	public VisualizationWindow(IGraphAlgorithm graphAlgorithm, String[] visualizers) {
+		this(graphAlgorithm, "Visualizer for " + graphAlgorithm, visualizers);
 	}
 
 	/**
@@ -34,7 +45,7 @@ public class VisualizationWindow<V, E> {
 	 * @param observable The algorithm which should be observed
 	 * @param title      The title of the window
 	 */
-	public VisualizationWindow(IGraphAlgorithm<?, ?, V, E> observable, String title) {
+	public VisualizationWindow(IGraphAlgorithm<?, ?, V, E> observable, String title, String[] visualizers) {
 		this.tooltipSupplier = new TooltipSupplier();
 		this.tooltipSupplier.setGenerator(getTooltipGenerator());
 		if (fxThread == null) {
@@ -61,6 +72,12 @@ public class VisualizationWindow<V, E> {
 //                GuiApp app = new GuiApp();
 				System.out.println("Code");
 				FXCode code = new FXCode(recorder, title);
+				for (String v: visualizers) {
+					if (v.equals("LandscapeVisualizer")) {
+						code.addVisualizerInTab(new LandscapeVisualizer());
+					}
+					// Initialize more visualizers here.
+				}
 				System.out.println("Gui started");
 			});
 
@@ -72,8 +89,13 @@ public class VisualizationWindow<V, E> {
 		// this.addDataSupplier(tooltipSupplier);
 	}
 
+
 	public void addDataSupplier(ISupplier supplier) {
 		recorder.addDataSupplier(supplier);
+	}
+
+	public Recorder getRecorder() {
+		return recorder;
 	}
 
 	private TooltipGenerator<V> getTooltipGenerator() {

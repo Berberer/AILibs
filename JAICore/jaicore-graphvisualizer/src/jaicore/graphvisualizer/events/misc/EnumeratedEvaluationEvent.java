@@ -1,11 +1,13 @@
 package jaicore.graphvisualizer.events.misc;
 
+import jaicore.graphvisualizer.events.graphEvents.GraphEvent;
+
 /**
  *
  * @param <V>
  * @param <I>
  */
-public class EnumeratedEvaluationEvent<V, I extends Comparable<I>> implements Comparable<EnumeratedEvaluationEvent<V,I>> {
+public class EnumeratedEvaluationEvent<V, I extends Comparable<I>> implements GraphEvent, Comparable<EnumeratedEvaluationEvent<V,I>> {
 
     private final V evaluation;
     private final I index;

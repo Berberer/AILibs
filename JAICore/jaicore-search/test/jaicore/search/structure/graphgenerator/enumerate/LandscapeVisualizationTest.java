@@ -3,6 +3,8 @@ package jaicore.search.structure.graphgenerator.enumerate;
 import jaicore.graphvisualizer.enumerate.EnumeratedNode;
 import jaicore.graphvisualizer.enumerate.ListEnumerator;
 import jaicore.graphvisualizer.gui.VisualizationWindow;
+import jaicore.graphvisualizer.gui.dataVisualizer.IVisualizer;
+import jaicore.graphvisualizer.gui.dataVisualizer.LandscapeVisualizer;
 import jaicore.search.algorithms.standard.bestfirst.BestFirst;
 import jaicore.search.algorithms.standard.bestfirst.BestFirstFactory;
 import jaicore.search.algorithms.standard.bestfirst.nodeevaluation.RandomCompletionBasedNodeEvaluator;
@@ -52,11 +54,16 @@ public class LandscapeVisualizationTest {
         bestFirstFactory.setTimeoutForFComputation(5000, n -> Double.MAX_VALUE);
         algorithm = bestFirstFactory.getAlgorithm();
 
-        VisualizationWindow window = new VisualizationWindow<EnumeratedNode<QueenNode, ListEnumerator.EnumerationList>, String>(algorithm);
-
         EnumeratedEvaluationsSupplier<KnapsackProblem.KnapsackNode, String, Double, String, ListEnumerator.EnumerationList> ees = new EnumeratedEvaluationsSupplier();
         algorithm.registerListener(ees);
-        window.addDataSupplier(ees);
+
+        String[] visualizers = {"LandscapeVisualizer"};
+        VisualizationWindow window = new VisualizationWindow<EnumeratedNode<QueenNode, ListEnumerator.EnumerationList>, String>(algorithm, visualizers);
+        // Make the recorder listen to the EnumeratedEvaluationEvent published by EnumeratedEvaluationsSupplier.
+        // Note that this Supllier will not listen to any of the replayBus events of the recorder.
+        // Its a Supplier between the algorithm and the recorder, to translate the BestFirstEvent's to event that
+        // can be handeled in the `jaicore.graphvisualizer` package.
+        ees.registerListener(window.getRecorder());
 
 
         algorithm.setTimeout(timeout * 1000, TimeUnit.MILLISECONDS);

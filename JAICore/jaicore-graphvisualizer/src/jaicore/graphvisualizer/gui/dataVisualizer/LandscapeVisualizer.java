@@ -4,21 +4,18 @@ package jaicore.graphvisualizer.gui.dataVisualizer;
 
 import com.google.common.eventbus.Subscribe;
 
-import jaicore.graphvisualizer.enumerate.EnumeratedNode;
 import jaicore.graphvisualizer.enumerate.ListEnumerator;
 import jaicore.graphvisualizer.events.controlEvents.NodePushed;
+import jaicore.graphvisualizer.events.graphEvents.EnumeratedEvaluationBackwardEvent;
 import jaicore.graphvisualizer.events.misc.EnumeratedEvaluationEvent;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
-import javafx.scene.shape.Line;
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * How to parametrize this LandscapeVisualizer if its get loaded/instanciated from the classpath (not easy possible).
@@ -79,35 +76,84 @@ public class LandscapeVisualizer implements IVisualizer {
         return chart;
     }
 
+    /**
+     * Deprecated. See `recieveEnumeratedEvaluationEventBatch`.
+     * @param event
+     */
     @Subscribe
     public void receiveEnumeratedEvaluationEvent(EnumeratedEvaluationEvent<Double, ListEnumerator.EnumerationList> event) {
-//        assert event.getIndex() instanceof ListEnumerator.EnumerationList;
-//        assert event.getEvaluation() instanceof Double;
         // Buffer the events.
         buffer.add(event);
-
         if (buffer.size() == 25) {
-            ArrayList<EnumeratedEvaluationEvent<Double, ListEnumerator.EnumerationList>> eventsToProcess = new ArrayList<>(buffer);
+            ArrayList<EnumeratedEvaluationEvent<Double, ListEnumerator.EnumerationList>> batch = new ArrayList<>(buffer);
             buffer.clear();
-            Platform.runLater(() -> {
-                for (EnumeratedEvaluationEvent<Double, ListEnumerator.EnumerationList> e: eventsToProcess) {
-                    evaluatedSeries.getData().add(new XYChart.Data<>(event.getIndex().toString(), event.getEvaluation()));
-                    indices.add(e.getIndex());
-                }
-                calculateOpenSeries();
-            });
+            processBatch(batch);
         }
     }
 
+    @Subscribe
+    public void receiveEnumeratedEvaluationEventBatch(ArrayList<EnumeratedEvaluationEvent<Double, ListEnumerator.EnumerationList>> batch) {
+        processBatch(batch);
+    }
+
+    @Subscribe
+    public void receiveEnumeratedEvaluationsBackwardEvent(EnumeratedEvaluationBackwardEvent event) {
+        System.out.println("Backward");
+        // Remove latest data.
+        Platform.runLater(()->{
+            int dataSize = evaluatedSeries.getData().size();
+            evaluatedSeries.getData().remove(dataSize-event.getSteps(), dataSize);
+        });
+        // Remove latest indices and replot open series.
+        List<ListEnumerator.EnumerationList> indicesToRemove = indices.subList(indices.size()-event.getSteps(), indices.size());
+        indices.removeAll(indicesToRemove);
+        calculateOpenSeries();
+    }
+
+    private void processBatch(ArrayList<EnumeratedEvaluationEvent<Double, ListEnumerator.EnumerationList>> batch) {
+        List<XYChart.Data> newData = batch
+                .stream()
+                .map(e->new XYChart.Data<>(e.getIndex().toString(), e.getEvaluation()))
+                .collect(Collectors.toList());
+        XYChart.Data[] newDataArray = newData.toArray(new XYChart.Data[newData.size()]);
+        List<ListEnumerator.EnumerationList> newIndices = batch
+                .stream()
+                .map(e->(ListEnumerator.EnumerationList)e.getIndex())
+                .collect(Collectors.toList());
+        Platform.runLater(() -> {
+            evaluatedSeries.getData().addAll(newDataArray);
+            evaluatedSeries.getData().sort(new Comparator<XYChart.Data<String, Number>>() {
+                @Override
+                public int compare(XYChart.Data<String, Number> o1, XYChart.Data<String, Number> o2) {
+                    return o1.getXValue().compareTo(o2.getXValue());
+                }
+            });
+            indices.addAll(newIndices);
+            calculateOpenSeries();
+        });
+    }
+
+
+
+    /**
+     * Calculates and displays the open series, respec. displays points, if there is
+     * a possible node between any pair of nodes of the current displayed nodes.
+     */
     private void calculateOpenSeries() {
+        // Clear current open series.
         openSeries.getData().clear();
+        // Calculate new open series and collect the new data points in batch.
+        List<XYChart.Data> batch = new ArrayList<>();
         for(int i=0; i<indices.size()-1; i++) {
             ListEnumerator.EnumerationList index = indices.get(i);
             ListEnumerator.EnumerationList index_ = indices.get(i+1);
-            if(index.siblingClone().compareTo(index_) < 0) {
-                openSeries.getData().add(new XYChart.Data<>(index.toString(), 0));
+            if(index.siblingClone().compareTo(index_) != 0) {
+                batch.add(new XYChart.Data<>(index.toString(), 0));
             }
         }
+        // Add the batch to the series.
+        XYChart.Data[] batchArray = batch.toArray(new XYChart.Data[batch.size()]);
+        openSeries.getData().addAll(batchArray);
     }
 
     @Subscribe
