@@ -18,27 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * How to parametrize this LandscapeVisualizer if its get loaded/instanciated from the classpath (not easy possible).
- *
- * Using V in GraphVisualizer. But this is not the V used in search (for evaluation)...confusing.
- *
- * Everything is confusing here.
- *
- * The node push event contains a package jaicore.search.model.travesaltree.Node;
- * Since jaicore.search depends on jaicore.graphvisuakizer i can not access the external lable here.
- *
- * Think about a central storage for everything that might be interesting for the GUI (also let the click events
- * flow through this storage). Then every component can subscribe to/take the data from the storage and access it
- * (Thats how its done in WebDevelopment (redux patter) at least and I think its can be beneficial here as well (seperated model-view
- * and keeps every view-component consistent)
- *
- * The javafx charts (espacilly CategoryAxes) seems to be not that performant with big data.
- *
- * Calculating the places where there is a possible unexplored sibling between to node is useless, since there
- * is almost always one -> everywhere are scatters and you wont see anything.
- */
-
-/**
  *
  */
 public class LandscapeVisualizer implements IVisualizer {

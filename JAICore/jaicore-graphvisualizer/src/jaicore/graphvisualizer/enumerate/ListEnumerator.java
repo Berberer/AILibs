@@ -1,7 +1,6 @@
 package jaicore.graphvisualizer.enumerate;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class ListEnumerator implements TreeEnumerator<ListEnumerator.EnumerationList> {
