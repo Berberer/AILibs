@@ -9,13 +9,16 @@ import jaicore.graphvisualizer.events.controlEvents.NodePushed;
 import jaicore.graphvisualizer.events.graphEvents.EnumeratedEvaluationBackwardEvent;
 import jaicore.graphvisualizer.events.misc.EnumeratedEvaluationEvent;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  *
@@ -97,14 +100,28 @@ public class LandscapeVisualizer implements IVisualizer {
         XYChart.Data[] newDataArray = newData.toArray(new XYChart.Data[newData.size()]);
         List<ListEnumerator.EnumerationList> newIndices = batch
                 .stream()
-                .map(e->(ListEnumerator.EnumerationList)e.getIndex())
+                .map(e->e.getIndex())
                 .collect(Collectors.toList());
         Platform.runLater(() -> {
             evaluatedSeries.getData().addAll(newDataArray);
             evaluatedSeries.getData().sort(new Comparator<XYChart.Data<String, Number>>() {
                 @Override
                 public int compare(XYChart.Data<String, Number> o1, XYChart.Data<String, Number> o2) {
-                    return o1.getXValue().compareTo(o2.getXValue());
+                    String[] list1 = o1.getXValue().split(",");
+                    String[] list2 = o2.getXValue().split((","));
+                    Integer[] list1int = Stream.of(list1).map(Integer::valueOf).toArray(Integer[]::new);
+                    Integer[] list2int = Stream.of(list2).map(Integer::valueOf).toArray(Integer[]::new);
+
+                    int minLength = list1int.length < list2int.length ? list1int.length : list2int.length;
+                    for(int i=0; i < minLength; i++) {
+                        int itemCompare = list1int[i].compareTo(list2int[i]);
+                        if (itemCompare != 0) return itemCompare;
+                    }
+                    // Compare on length.
+                    int lengthCompare = Integer.compare(list1int.length, list2int.length);
+                    if (lengthCompare != 0) return lengthCompare;
+                    // Must be equal.
+                    return 0;
                 }
             });
             indices.addAll(newIndices);
