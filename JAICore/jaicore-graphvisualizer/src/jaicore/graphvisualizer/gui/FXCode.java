@@ -18,6 +18,7 @@ import jaicore.graphvisualizer.events.misc.AddSupplierEvent;
 import jaicore.graphvisualizer.events.misc.InfoEvent;
 import jaicore.graphvisualizer.gui.dataSupplier.ISupplier;
 import jaicore.graphvisualizer.gui.dataVisualizer.IVisualizer;
+import jaicore.graphvisualizer.gui.dataVisualizer.LandscapeVisualizer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -40,7 +41,7 @@ public class FXCode<V,E> implements NodeListener<V> {
 
 //    Tabpane for additional tabs
 	private TabPane tabPane;
-
+	private Recorder<V,E> recorder;
 //    timeline
 	private Slider timeline;
 
@@ -160,6 +161,15 @@ public class FXCode<V,E> implements NodeListener<V> {
 		stage.show();
 
 		rec.getSupplier();
+		this.recorder = rec;
+	}
+
+	public void addVisualizerInTab(IVisualizer visualizer) {
+		this.recorder.registerReplayListener(visualizer);
+		Tab tab = new Tab();
+		tab.setContent(visualizer.getVisualization());
+		tab.setText(visualizer.getTitle());
+		this.tabPane.getTabs().add(tab);
 	}
 
 	/**

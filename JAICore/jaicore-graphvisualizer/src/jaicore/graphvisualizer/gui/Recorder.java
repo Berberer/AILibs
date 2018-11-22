@@ -21,12 +21,9 @@ import jaicore.graphvisualizer.events.controlEvents.FileEvent;
 import jaicore.graphvisualizer.events.controlEvents.NodePushed;
 import jaicore.graphvisualizer.events.controlEvents.ResetEvent;
 import jaicore.graphvisualizer.events.controlEvents.StepEvent;
-import jaicore.graphvisualizer.events.graphEvents.GraphEvent;
-import jaicore.graphvisualizer.events.graphEvents.GraphInitializedEvent;
-import jaicore.graphvisualizer.events.graphEvents.NodeReachedEvent;
-import jaicore.graphvisualizer.events.graphEvents.NodeRemovedEvent;
-import jaicore.graphvisualizer.events.graphEvents.NodeTypeSwitchEvent;
+import jaicore.graphvisualizer.events.graphEvents.*;
 import jaicore.graphvisualizer.events.misc.AddSupplierEvent;
+import jaicore.graphvisualizer.events.misc.EnumeratedEvaluationEvent;
 import jaicore.graphvisualizer.events.misc.InfoEvent;
 import jaicore.graphvisualizer.gui.dataSupplier.ISupplier;
 import jaicore.graphvisualizer.gui.dataSupplier.ReconstructionDataSupplier;
@@ -136,8 +133,8 @@ public class Recorder<V,E> {
 		long eventTime = receiveTime - firstEventTime;
 		receivingTimes.add(eventTime);
 		this.infoBus.post(new InfoEvent(receivedEvents.size(), eventTime, 0));
-
 	}
+
 
 	/**
 	 * Receive a control event and make the appropiate action
@@ -162,6 +159,7 @@ public class Recorder<V,E> {
 		}
 	}
 
+
 	/**
 	 * Goes the number of steps forward in the graph. Usually the index + steps do
 	 * not get higher the number of received Events. The exeption is when there is
@@ -174,12 +172,18 @@ public class Recorder<V,E> {
 		if (this.index == this.receivedEvents.size())
 			if (this.algorithm.hasNext())
 				this.algorithm.next();
+		// Collect the EnumeratedEvaluationEvents and send in batches.
+
+		ArrayList<EnumeratedEvaluationEvent> enumeratedEvaluationEvents = new ArrayList<>();
 		while (steps != 0) {
 			if (this.index < this.receivedEvents.size()) {
 				Object event = this.receivedEvents.get(index);
-				this.replayBus.post(event);
-
-				this.addType(event);
+				if (event.getClass().getSimpleName().equals("EnumeratedEvaluationEvent")) {
+					enumeratedEvaluationEvents.add((EnumeratedEvaluationEvent)event);
+				} else {
+					this.replayBus.post(event);
+					this.addType(event);
+				}
 				index++;
 				if (this.index == this.receivedEvents.size())
 					break;
@@ -187,6 +191,8 @@ public class Recorder<V,E> {
 
 			steps--;
 		}
+		if (enumeratedEvaluationEvents.size() > 0)
+			this.replayBus.post(enumeratedEvaluationEvents);
 	}
 
 	/**
@@ -197,11 +203,21 @@ public class Recorder<V,E> {
 	private void backward(int steps) {
 		if (index == 0)
 			return;
+		// Sum of the EnumerationEvaluationEvents to make batch processing possible.
+		int enumerationEvaluatedEvents = 0;
 		while (index > 0 && steps != 0) {
 			index--;
-			this.replayBus.post(counterEvent(receivedEvents.get(index)));
+			Object event = receivedEvents.get(index);
+			if (event instanceof EnumeratedEvaluationEvent) {
+				enumerationEvaluatedEvents++;
+			} else {
+				this.replayBus.post(counterEvent(event));
+			}
 			steps--;
+
 		}
+		if (enumerationEvaluatedEvents > 0)
+			this.replayBus.post(new EnumeratedEvaluationBackwardEvent(enumerationEvaluatedEvents));
 	}
 
 	/**
